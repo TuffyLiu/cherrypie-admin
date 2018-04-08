@@ -18,7 +18,8 @@ import {
     Select,
     Option,
     OptionGroup,
-    Button
+    Button,
+    Card
 } from 'element-ui';
 
 Vue.use(Form);
@@ -35,6 +36,7 @@ Vue.use(Select);
 Vue.use(Option);
 Vue.use(OptionGroup);
 Vue.use(Button);
+Vue.use(Card);
 /* eslint-disable no-new */
 
 Vue.config.productionTip = false;

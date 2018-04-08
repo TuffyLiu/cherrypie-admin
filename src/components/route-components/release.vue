@@ -15,35 +15,49 @@
                 <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
         </el-form-item>
-        <el-form-item label="标题title">
-            <el-input v-model="form.title"></el-input>
-        </el-form-item>
-        <el-form-item label="库存sku">
-            <el-input v-model="form.sku"></el-input>
-        </el-form-item>
-        <el-form-item label="价格price">
-            <el-input v-model="form.price">
-                <el-select v-model="select" slot="append" placeholder="选择币种">
-                    <el-option label="美元(USD)" value="USD"></el-option>
-                    <el-option label="订单号" value="2"></el-option>
-                    <el-option label="用户电话" value="3"></el-option>
-                </el-select>
-            </el-input>
-        </el-form-item>
-        <el-form-item label="描述description">
-            <el-input type="textarea" :rows="4" v-model="form.description"></el-input>
-        </el-form-item>
-        <el-form-item label="细节details">
-            <el-button @click.prevent="removeDetails(index)" slot="append">删除</el-button>
-            <el-row  v-for="(detail, index) in form.details" :key="index">
-                <el-input v-model="detail.data">
-                    <el-select v-model="detail.label" slot="prepend" placeholder="名称">
-                        <el-option v-for="type in detailsType" :label="type" :value="type" :key="type"></el-option>
-                    </el-select>
-                    <el-button @click.prevent="removeDetails(index)" slot="append">删除</el-button>
-                </el-input>
-            </el-row>
-        </el-form-item>
+        <el-row :gutter="30">
+            <el-col :span="12">
+                <el-form-item label="标题title">
+                    <el-input v-model="form.title"></el-input>
+                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="10">
+                        <el-form-item label="库存sku">
+                            <el-input v-model="form.sku"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="14">
+                        <el-form-item label="价格price">
+                            <el-input v-model="form.price">
+                                <el-select v-model="form.currency" slot="append" placeholder="选择币种">
+                                    <el-option label="美元(USA$)" value="$"></el-option>
+                                    <el-option label="人民币(CNY￥)" value="￥"></el-option>
+                                    <el-option label="英镑(£)" value="£"></el-option>
+                                    <el-option label="欧元(€)" value="€"></el-option>
+                                </el-select>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-form-item label="描述description">
+                    <el-input type="textarea" :rows="4" v-model="form.description"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="12">
+                <el-form-item label="细节details">
+                    <el-button  type="primary"  @click.prevent="addDetails()">添加细节</el-button>
+                    <el-row  v-for="(detail, index) in form.details" :key="index" class="item">
+                        <el-input v-model="detail.data">
+                            <el-select v-model="detail.label" slot="prepend" placeholder="名称">
+                                <el-option v-for="type in detailsType" :label="type" :value="type" :key="type"></el-option>
+                            </el-select>
+                            <el-button @click.prevent="removeDetails(index)" slot="append">删除</el-button>
+                        </el-input>
+                    </el-row>
+                </el-form-item>
+            </el-col>
+        </el-row>
+        <el-button type="primary" @click.prevent="addDetails()">发布</el-button>
     </el-form>
 </template>
 
@@ -65,13 +79,14 @@ export default {
                 sku: '',
                 description: '',
                 price: '',
+                currency: '$',
                 details: [
                     {
                         label: 'Collection',
                         data: 'Stationery &amp; Gift Products'
                     },
                     {
-                        label: 'Collection',
+                        label: 'Dimensions',
                         data: 'Stationery &amp; Gift Products'
                     }
                 ]
@@ -90,6 +105,12 @@ export default {
             if (this.form.details.length > 1) {
                 this.form.details.splice(index, 1);
             }
+        },
+        addDetails () {
+            this.form.details.push({
+                label: 'Dimensions',
+                data: ''
+            });
         }
     }
 
@@ -100,10 +121,16 @@ export default {
 <style scoped>
     .release{
         text-align: left;
-        padding: 20px;
+        padding: 0 20px;
     }
     .el-select{
-        width: 180px;
+        width: 150px;
+    }
+    .item .el-select{
+        width: 170px;
+    }
+    .item{
+        margin: 10px 0;
     }
 </style>
 <style>

@@ -2,7 +2,7 @@
     @file:登录成功后所有子模块的父组件,包含左侧导航栏,顶部菜单栏等
 -->
 <template>
-    <el-menu default-active="2" :router="true">
+    <el-menu default-active="2" :router="true" id="nav-menu">
         <el-menu-item index="/">
             <i class="el-icon-picture"></i>
             <span slot="title">所有产品</span>
@@ -35,6 +35,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
     #nav-menu{
-
+        position: fixed;
+        top:0;
+        bottom: 0;
+        width: 140px;
+        left: 0;
     }
 </style>
