@@ -2,8 +2,8 @@
     @file:登录成功后所有子模块的父组件,包含左侧导航栏,顶部菜单栏等
 -->
 <template>
-    <el-menu default-active="2" :router="true" id="nav-menu">
-        <el-menu-item index="/">
+    <el-menu :default-active="path" :router="true" id="nav-menu">
+        <el-menu-item index="home">
             <i class="el-icon-picture"></i>
             <span slot="title">所有产品</span>
         </el-menu-item>
@@ -11,7 +11,7 @@
             <i class="el-icon-edit"></i>
             <span slot="title">产品发布</span>
         </el-menu-item>
-        <el-menu-item index="nav">
+        <el-menu-item index="menu">
             <i class="el-icon-tickets"></i>
             <span slot="title">顶部菜单</span>
         </el-menu-item>
@@ -27,6 +27,7 @@ export default {
     name: 'nav-menu',
     data () {
         return {
+            path: this.$route.name
         };
     }
 };

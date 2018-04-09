@@ -19,7 +19,8 @@ import {
     Option,
     OptionGroup,
     Button,
-    Card
+    Card,
+    Pagination
 } from 'element-ui';
 
 Vue.use(Form);
@@ -37,6 +38,7 @@ Vue.use(Option);
 Vue.use(OptionGroup);
 Vue.use(Button);
 Vue.use(Card);
+Vue.use(Pagination);
 /* eslint-disable no-new */
 
 Vue.config.productionTip = false;

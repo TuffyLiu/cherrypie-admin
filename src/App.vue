@@ -23,5 +23,10 @@ export default {
     text-align: center;
     color: #2c3e50;
     padding-left: 140px;
+    position: relative;
+}
+body,html{
+    margin: 0;
+    padding: 0;
 }
 </style>
