@@ -20,6 +20,8 @@ import {
     OptionGroup,
     Button,
     Card,
+    Tree,
+    Dialog,
     Pagination
 } from 'element-ui';
 
@@ -39,6 +41,8 @@ Vue.use(OptionGroup);
 Vue.use(Button);
 Vue.use(Card);
 Vue.use(Pagination);
+Vue.use(Tree);
+Vue.use(Dialog);
 /* eslint-disable no-new */
 
 Vue.config.productionTip = false;

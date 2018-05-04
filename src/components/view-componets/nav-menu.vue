@@ -19,6 +19,10 @@
             <i class="el-icon-star-on"></i>
             <span slot="title">首页广告</span>
         </el-menu-item>
+        <el-menu-item index="message">
+            <i class="el-icon-message"></i>
+            <span slot="title">访客邮件</span>
+        </el-menu-item>
     </el-menu>
 </template>
 

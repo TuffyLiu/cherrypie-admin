@@ -21,12 +21,12 @@
                     <el-input v-model="form.title"></el-input>
                 </el-form-item>
                 <el-row :gutter="20">
-                    <el-col :span="10">
+                    <el-col :span="12">
                         <el-form-item label="库存sku">
                             <el-input v-model="form.sku"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="14">
+                    <el-col :span="12">
                         <el-form-item label="价格price">
                             <el-input v-model="form.price">
                                 <el-select v-model="form.currency" slot="append" placeholder="选择币种">
@@ -39,6 +39,23 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item label="标签">
+                            <el-select v-model="value" placeholder="请选择">
+                                <el-option
+                                  v-for="item in options"
+                                  :key="item.value"
+                                  :label="item.label"
+                                  :value="item.value">
+                                </el-option>
+                              </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                    </el-col>
+                </el-row>
+
                 <el-form-item label="描述description">
                     <el-input type="textarea" :rows="4" v-model="form.description"></el-input>
                 </el-form-item>
