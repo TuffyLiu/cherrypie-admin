@@ -4,6 +4,7 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import Api from './api';
+import axios from 'axios';
 
 import {
     Form,
@@ -27,6 +28,9 @@ import {
 } from 'element-ui';
 
 Vue.prototype.Api = Api;
+Vue.prototype.$axios = axios;
+Vue.prototype.$axios.defaults.timeout = 30000;
+
 Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(upload);

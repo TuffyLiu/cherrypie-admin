@@ -64,7 +64,7 @@
                 <el-form-item label="细节details">
                     <el-button  type="primary"  @click.prevent="addDetails()">添加细节</el-button>
                     <el-row  v-for="(detail, index) in form.details" :key="index" class="item">
-                        <el-input v-model="detail.data">
+                        <el-input v-model="detail.value">
                             <el-select v-model="detail.label"
                                 filterable
                                 allow-create
@@ -103,16 +103,16 @@ export default {
                 sku: '',
                 description: '',
                 price: '',
-                occasion: '',
+                occasion: [],
                 currency: '$',
                 details: [
                     {
                         label: 'Collection',
-                        data: 'Stationery &amp; Gift Products'
+                        value: 'Stationery &amp; Gift Products'
                     },
                     {
                         label: 'Dimensions',
-                        data: 'Stationery &amp; Gift Products'
+                        value: 'Stationery &amp; Gift Products'
                     }
                 ]
             }
@@ -136,6 +136,14 @@ export default {
         },
         handleRemove (file, fileList) {
             console.log(file, fileList);
+            const self = this;
+            self.$axios.delete(self.Api.picture + file.response._id)
+                .then(function (res) {
+                    console.info('delete sucess');
+                })
+                .catch(function () {
+                    console.error('delete fail');
+                });
         },
         handlePictureCardPreview (file) {
             this.dialogImageUrl = file.url;
@@ -149,11 +157,19 @@ export default {
         addDetails () {
             this.form.details.push({
                 label: 'Dimensions',
-                data: ''
+                value: ''
             });
         },
         releaseProduct () {
             console.log(this.form);
+            const self = this;
+            self.$axios.post(self.Api.product, self.form)
+                .then(function (res) {
+                    console.info('release sucess');
+                })
+                .catch(function () {
+                    console.info('release fail');
+                });
         }
     }
 
@@ -170,7 +186,7 @@ export default {
         width: 100%;
     }
     .unit{
-        width: 250px;
+        width: 150px;
     }
     .item .el-select{
         width: 170px;
