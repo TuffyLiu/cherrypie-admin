@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import Api from './api';
 
 import {
     Form,
@@ -25,6 +26,7 @@ import {
     Pagination
 } from 'element-ui';
 
+Vue.prototype.Api = Api;
 Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(upload);

@@ -5,8 +5,10 @@
     <el-form ref="form" :model="form"  :inline="false" label-position="top" class="release">
         <el-form-item label="上传产品图片">
             <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
+                :action="this.Api.picture"
                 list-type="picture-card"
+                :before-upload="beforeUpload"
+                :on-success="onSuccess"
                 :on-preview="handlePictureCardPreview"
                 :on-remove="handleRemove">
                 <i class="el-icon-plus"></i>
@@ -29,7 +31,7 @@
                     <el-col :span="12">
                         <el-form-item label="价格price">
                             <el-input v-model="form.price">
-                                <el-select v-model="form.currency" slot="append" placeholder="选择币种">
+                                <el-select v-model="form.currency" slot="append" placeholder="选择币种" class="unit">
                                     <el-option label="美元(USA$)" value="$"></el-option>
                                     <el-option label="人民币(CNY￥)" value="￥"></el-option>
                                     <el-option label="英镑(£)" value="£"></el-option>
@@ -39,23 +41,21 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="标签">
-                            <el-select v-model="value" placeholder="请选择">
-                                <el-option
-                                  v-for="item in options"
-                                  :key="item.value"
-                                  :label="item.label"
-                                  :value="item.value">
-                                </el-option>
-                              </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                    </el-col>
-                </el-row>
-
+                <el-form-item label="类别occasion">
+                    <el-select
+                        multiple
+                        filterable
+                        allow-create
+                        default-first-option
+                        v-model="form.occasion" placeholder="请选择">
+                        <el-option
+                          v-for="item in options"
+                          :key="item"
+                          :label="item"
+                          :value="item">
+                        </el-option>
+                      </el-select>
+                </el-form-item>
                 <el-form-item label="描述description">
                     <el-input type="textarea" :rows="4" v-model="form.description"></el-input>
                 </el-form-item>
@@ -65,7 +65,12 @@
                     <el-button  type="primary"  @click.prevent="addDetails()">添加细节</el-button>
                     <el-row  v-for="(detail, index) in form.details" :key="index" class="item">
                         <el-input v-model="detail.data">
-                            <el-select v-model="detail.label" slot="prepend" placeholder="名称">
+                            <el-select v-model="detail.label"
+                                filterable
+                                allow-create
+                                default-first-option
+                                slot="prepend"
+                                placeholder="名称">
                                 <el-option v-for="type in detailsType" :label="type" :value="type" :key="type"></el-option>
                             </el-select>
                             <el-button @click.prevent="removeDetails(index)" slot="append">删除</el-button>
@@ -74,7 +79,7 @@
                 </el-form-item>
             </el-col>
         </el-row>
-        <el-button type="primary" @click.prevent="addDetails()">发布</el-button>
+        <el-button type="primary" @click.prevent="releaseProduct()">发布</el-button>
     </el-form>
 </template>
 
@@ -86,16 +91,19 @@ export default {
             dialogVisible: false,
             dialogImageUrl: '',
             currency: '',
+            options: ['love'],
             detailsType: [
                 'Collection',
                 'Dimensions',
                 'Special Finish'
             ],
             form: {
+                picture: [],
                 title: '',
                 sku: '',
                 description: '',
                 price: '',
+                occasion: '',
                 currency: '$',
                 details: [
                     {
@@ -111,6 +119,21 @@ export default {
         };
     },
     methods: {
+        beforeUpload (file) {
+            const allowedFileTypes = ['image/png', 'image/jpeg', 'image/gif'];
+            const isLt10M = file.size / 1024 / 1024 < 10;
+            const isPicture = allowedFileTypes.indexOf(file.type) > -1;
+            if (!isPicture) {
+                this.$message.error('只能上传png/jpeg/gif图片!');
+            }
+            if (!isLt10M) {
+                this.$message.error('上传图片大小不能超过 10MB!');
+            }
+            return isPicture && isLt10M;
+        },
+        onSuccess (response, file, fileList) {
+            this.form.picture.push(response._id);
+        },
         handleRemove (file, fileList) {
             console.log(file, fileList);
         },
@@ -128,6 +151,9 @@ export default {
                 label: 'Dimensions',
                 data: ''
             });
+        },
+        releaseProduct () {
+            console.log(this.form);
         }
     }
 
@@ -141,7 +167,10 @@ export default {
         padding: 0 20px;
     }
     .el-select{
-        width: 150px;
+        width: 100%;
+    }
+    .unit{
+        width: 250px;
     }
     .item .el-select{
         width: 170px;

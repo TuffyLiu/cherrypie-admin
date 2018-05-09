@@ -72,8 +72,8 @@ export default {
     data () {
         return {
             form: {
-                label: "",
-                href: ""
+                label: '',
+                href: ''
             },
             dialogDelete: false,
             dialogEdit: false,
