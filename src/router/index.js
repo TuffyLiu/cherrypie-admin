@@ -19,6 +19,10 @@ export default new Router({
         name: 'release',
         component: release
     }, {
+        path: '/edict/:id',
+        name: 'edict',
+        component: release
+    }, {
         path: '/menu',
         name: 'menu',
         component: menu
@@ -32,7 +36,7 @@ export default new Router({
         component: message
     }, {
         path: '*',
-        name: 'home',
+        name: 'default',
         component: home
     }]
 });

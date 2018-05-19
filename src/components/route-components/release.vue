@@ -11,6 +11,7 @@
                     :before-upload="beforeUpload"
                     :on-success="onSuccess"
                     :on-preview="handlePictureCardPreview"
+                    :file-list="fileList"
                     :on-remove="handleRemove">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -80,7 +81,8 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-button type="primary" @click.prevent="releaseProduct('ruleForm')">发布</el-button>
+            <el-button v-if="edict" type="primary" @click.prevent="updateProduct('ruleForm')">发布</el-button>
+            <el-button v-else type="primary" @click.prevent="releaseProduct('ruleForm')">发布</el-button>
         </el-form>
         <el-dialog
               title="发布成功"
@@ -89,8 +91,9 @@
               center>
               <p class="icon-dialog"><i class="el-icon-success"></i></p>
               <span slot="footer" class="dialog-footer">
-                <el-button  type="primary" @click="dialogSuccess = false">继续发布</el-button>
-                <el-button type="success" @click="checkProductDetail">产品页面</el-button>
+                <el-button  type="info" @click="continueEdict">继续修改</el-button>
+                <el-button  type="primary" @click="releaseNews">发布新品</el-button>
+                <el-button type="success" @click="checkProductDetail">查看页面</el-button>
               </span>
         </el-dialog>
     </div>
@@ -99,6 +102,11 @@
 <script>
 export default {
     name: 'release',
+    created () {
+        if (this.$route.name === 'edict') {
+            this.getProductDetail();
+        }
+    },
     data () {
         var validateDetails = (rule, value, callback) => {
             value.forEach(function (item) {
@@ -109,7 +117,9 @@ export default {
             callback();
         };
         return {
-            dialogSuccess: true,
+            edict: false,
+            releaseId: null,
+            dialogSuccess: false,
             dialogVisible: false,
             dialogImageUrl: '',
             currency: '',
@@ -168,7 +178,59 @@ export default {
             }
         };
     },
+    watch: {
+        '$route' (to, from) {
+            if (this.$route.name !== 'edict') {
+                this.edict = false;
+                this.$refs['ruleForm'].resetFields();
+            } else {
+                this.edict = true;
+                this.getProductDetail();
+            }
+        }
+    },
+    computed: {
+        fileList: function () {
+            return this.form.picture.map(picture => {
+                return {
+                    name: picture,
+                    url: this.Api.picture + picture
+                };
+            });
+        }
+    },
     methods: {
+        continueEdict () {
+            /**
+             * click to continue edict product
+             */
+            this.dialogSuccess = false;
+            if (!this.edict) {
+                this.$router.push({name: 'edict', params: {id: this.releaseId}});
+            }
+        },
+        releaseNews () {
+            /**
+             * click to release new product
+             */
+            this.dialogSuccess = false;
+            if (this.edict) {
+                this.$router.push({name: 'release'});
+            }
+        },
+        getProductDetail () {
+            /**
+             * edict product info by _id
+             */
+
+            this.releaseId = this.$route.params.id;
+            this.edict = true;
+            this.$axios.get(this.Api.product + this.releaseId).then(res => {
+                this.form = res.data;
+            }).catch(function (e) {
+                console.error(e);
+            });
+        },
         beforeUpload (file) {
             /**
              * valudate file before update
@@ -199,14 +261,13 @@ export default {
              * @file {object} remove file
              * @fileList {array} flie list
              */
-            const self = this;
-            self.$axios.delete(self.Api.picture + file.response._id)
-                .then(function (res) {
-                    self.form.picture = self.form.picture.filter(function (value) {
-                        console.log(value === file.response._id);
-                        return value !== file.response._id;
+            const _id = file.response ? file.response._id : file.name;
+            this.$axios.delete(this.Api.picture + _id)
+                .then(res => {
+                    this.form.picture = this.form.picture.filter(function (value) {
+                        return value !== _id;
                     });
-                    self.$refs['ruleForm'].validateField('picture');
+                    this.$refs['ruleForm'].validateField('picture');
                 })
                 .catch(function () {
                     console.error('delete fail');
@@ -231,11 +292,24 @@ export default {
             console.log(this.form);
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    const self = this;
-                    self.$axios.post(self.Api.product, self.form)
-                        .then(function (res) {
-                            self.dialogSuccess = true;
-                            console.info('release sucess');
+                    this.$axios.post(this.Api.product, this.form)
+                        .then(res => {
+                            this.dialogSuccess = true;
+                            this.releaseId = res.data._id;
+                            this.$refs[formName].resetFields();
+                        })
+                        .catch(function () {
+                            console.info('release fail');
+                        });
+                }
+            });
+        },
+        updateProduct (formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.$axios.put(this.Api.product, this.form)
+                        .then(res => {
+                            this.dialogSuccess = true;
                         })
                         .catch(function () {
                             console.info('release fail');
@@ -244,7 +318,10 @@ export default {
             });
         },
         checkProductDetail () {
-
+            /**
+             * click jump to check release product
+             */
+            window.open(this.Api.productDetail + this.releaseId);
         }
     }
 

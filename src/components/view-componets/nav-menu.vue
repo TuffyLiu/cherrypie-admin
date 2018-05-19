@@ -2,7 +2,7 @@
     @file:登录成功后所有子模块的父组件,包含左侧导航栏,顶部菜单栏等
 -->
 <template>
-    <el-menu :default-active="path" :router="true" id="nav-menu">
+    <el-menu :default-active="path"  id="nav-menu" @select="handleSelect">
         <el-menu-item index="home">
             <i class="el-icon-picture"></i>
             <span slot="title">所有产品</span>
@@ -33,6 +33,11 @@ export default {
         return {
             path: this.$route.name
         };
+    },
+    methods: {
+        handleSelect (key) {
+            this.$router.push({name: key});
+        }
     }
 };
 </script>
