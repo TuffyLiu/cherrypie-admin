@@ -236,6 +236,7 @@ export default {
              * valudate file before update
              * @file {object}
              */
+            console.log('file', file);
             const allowedFileTypes = ['image/png', 'image/jpeg', 'image/gif'];
             const isLt10M = file.size / 1024 / 1024 < 10;
             const isPicture = allowedFileTypes.indexOf(file.type) > -1;
@@ -261,6 +262,7 @@ export default {
              * @file {object} remove file
              * @fileList {array} flie list
              */
+            console.log('file', file);
             const _id = file.response ? file.response._id : file.name;
             this.$axios.delete(this.Api.picture + _id)
                 .then(res => {

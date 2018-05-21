@@ -3,25 +3,45 @@
 -->
 <template>
     <div id="home">
+        <el-input
+            placeholder="关键字搜索"
+            prefix-icon="el-icon-search"
+            v-model="keyWord">
+        </el-input>
         <el-pagination
             class="home_pa"
             background
-            layout="prev, pager, next"
-            :total="100">
+            layout="prev, pager, next, total"
+            @current-change="getPoductList"
+            :total="serverList.total"
+            :page-size="pageSize"
+            :current-page.sync="currentPage"
+            >
         </el-pagination>
-        <el-row  :gutter="30">
-            <el-col :span="6" v-for="pr in productList" :key="pr.id" >
+        <el-row  :gutter="30" >
+            <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4" v-for="pr in productList" :key="pr.id" style="padding-bottom: 15px;padding-top: 15px;" >
                 <el-card :body-style="{ padding: '0px' }"  >
-                    <img :src="pr.img" class="image">
+                    <img :src="pr.img" class="image" @click="checkProduct(pr.id)">
                     <div style="padding: 14px;">
                         <span>{{pr.title}}</span>
                         <div class="bottom clearfix">
-                          <time class="time">{{ pr.timestamp }}</time>
-                          <el-button type="text" class="button">编辑</el-button>
-                          <el-button type="text" class="button">查看</el-button>
-                          <el-button type="text" class="button">删除</el-button>
+                          <span class="time">{{ pr.timestamp }}</span>
+                          <el-popover
+                              placement="top"
+                              width="200"
+                              trigger="hover"
+                              >
+                              <p>您将删除产品“{{pr.title}}”</p>
+                              <div style="text-align: right; margin: 0">
+                                <el-button type="primary" size="mini" @click="deleteProduct(pr.id)">确定</el-button>
+                              </div>
+                              <el-button type="text" class="button" slot="reference">删除</el-button>
+                          </el-popover>
+                          <el-button type="text" class="button" @click="edictProduct(pr.id)">编辑</el-button>
+                          <el-button type="text" class="button" @click="checkProduct(pr.id)">查看</el-button>
                         </div>
                     </div>
+
                 </el-card>
             </el-col>
         </el-row>
@@ -29,48 +49,96 @@
 </template>
 
 <script>
+import {debounce} from 'lodash';
 export default {
     name: 'home',
+    created () {
+        this.getPoductList();
+        this.debouncedGetAnswer = debounce(this.searchByWord, 500);
+    },
     data () {
         return {
-            productList: [
-                {
-                    title: 'Delicious Cookies Kids Valentine Card Kit with Stickers',
-                    timestamp: '2018-04-08 22:37',
-                    img: 'static/img/val_card_kit_wholekit_1.jpg',
-                    id: 'q'
-                },
-                {
-                    title: 'Delicious Cookies Kids Valentine Card Kit with Stickers',
-                    timestamp: '2018-04-08 22:37',
-                    img: 'static/img/wt15-popicons-washitape-1.jpg',
-                    id: 'q1'
-                },
-                {
-                    title: 'Delicious Cookies Kids Valentine Card Kit with Stickers',
-                    timestamp: '2018-04-08 22:37',
-                    img: 'static/img/wt15-popicons-washitape-alt.jpg',
-                    id: 'q2'
-                },
-                {
-                    title: 'Delicious Cookies Kids Valentine Card Kit with Stickers',
-                    timestamp: '2018-04-08 22:37',
-                    img: 'static/img/trp238_massachusetts.detail.jpg',
-                    id: 'q3'
-                }
-            ]
+            visible: false,
+            keyWord: null,
+            pageSize: 10,
+            currentPage: 1,
+            serverList: {
+                total: 0,
+                list: [],
+                current: 1
+            }
         };
+    },
+    watch: {
+        keyWord: function () {
+            this.debouncedGetAnswer();
+        }
+    },
+    computed: {
+        productList: function () {
+            return this.serverList.list.map(product => {
+                return {
+                    title: product.title,
+                    timestamp: product.timestamp.split('.')[0].replace('T', ' '),
+                    img: this.Api.picture + product.picture[0],
+                    id: product._id
+                };
+            });
+        }
+    },
+    methods: {
+        searchByWord: function (value) {
+            this.currentPage = 1;
+            this.getPoductList();
+        },
+        deleteProduct: function (id) {
+            this.$axios.delete(this.Api.product + id)
+                .then(res => {
+                    this.getPoductList();
+                })
+                .catch(function () {
+                    console.error('delete fail');
+                });
+        },
+        edictProduct: function (id) {
+            this.$router.push({name: 'edict', params: {id: id}});
+        },
+        checkProduct: function (id) {
+            window.open(this.Api.productDetail + id);
+        },
+        getPoductList () {
+            this.$axios.get(this.Api.products,
+                {
+                    params: {
+                        keyword: this.keyWord,
+                        size: this.pageSize,
+                        current: this.currentPage
+                    }
+                }).then(res => {
+                this.serverList = res.data;
+            }).catch(function (e) {
+                console.error(e);
+            });
+        }
     }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.el-input{
+    position: absolute;
+    width: 200px;
+    left: 30px;
+    top: -5px;
+}
 #home{
+    position: relative;
     padding:0 30px;
 }
 .home_pa{
     margin: 20px auto;
+    text-align: right;
 }
 .time {
     font-size: 13px;
@@ -86,7 +154,8 @@ export default {
 .button {
     padding: 0;
     float: right;
-    margin-left: 5px;
+    margin-left: 4px;
+    font-size: 12px;
 }
 
 .image {

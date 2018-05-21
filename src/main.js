@@ -24,6 +24,7 @@ import {
     Card,
     Tree,
     Dialog,
+    Popover,
     Pagination
 } from 'element-ui';
 
@@ -49,6 +50,7 @@ Vue.use(Card);
 Vue.use(Pagination);
 Vue.use(Tree);
 Vue.use(Dialog);
+Vue.use(Popover);
 /* eslint-disable no-new */
 
 Vue.config.productionTip = false;
