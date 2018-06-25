@@ -91,9 +91,9 @@
               center>
               <p class="icon-dialog"><i class="el-icon-success"></i></p>
               <span slot="footer" class="dialog-footer">
-                <el-button  type="info" @click="continueEdict">继续修改</el-button>
-                <el-button  type="primary" @click="releaseNews">发布新品</el-button>
-                <el-button type="success" @click="checkProductDetail">查看页面</el-button>
+                <el-button  size="small" type="info" @click="continueEdict">继续修改</el-button>
+                <el-button  size="small" type="primary" @click="releaseNews">发布新品</el-button>
+                <el-button  size="small" type="success" @click="checkProductDetail">查看页面</el-button>
               </span>
         </el-dialog>
     </div>

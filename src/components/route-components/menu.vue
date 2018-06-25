@@ -69,6 +69,9 @@
 <script>
 export default {
     name: 'menu',
+    created () {
+        this.getMenusList();
+    },
     data () {
         return {
             form: {
@@ -78,7 +81,7 @@ export default {
             dialogDelete: false,
             dialogEdit: false,
             dialogPlus: false,
-            data: [
+            data: []/* [
                 {
                     id: 1,
                     label: 'New',
@@ -146,8 +149,22 @@ export default {
                         }
                     ]
                 }
-            ]
+            ] */
         };
+    },
+    methods: {
+        getMenusList () {
+            this.$axios.get(this.Api.menus).then(res => {
+                this.data = res.data;
+                console.log(res);
+            }).catch(function (e) {
+                console.error(e);
+            });
+        },
+        addMenu () {
+        },
+        updateMenu () {
+        }
     }
 };
 </script>
